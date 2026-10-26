@@ -1,0 +1,12 @@
+---
+import { profile } from "../data/portfolio";
+import Icon from "./Icon.astro";
+---
+<section id="contact" class="section"><div class="container-width contact-layout">
+  <div><p class="section-label">关于我</p><h2 class="section-title">继续交流，<br />继续做点新东西。</h2></div>
+  <div class="contact-copy"><p>我是吴江彬，喜欢把学习中的问题变成可以运行、可以观察、可以复盘的项目。</p><p class="muted">这里记录软件开发、机器学习实验、数学建模与编程练习。项目相关的问题与想法，欢迎在 GitHub 交流。</p><a class="button" href={profile.github} target="_blank" rel="noopener noreferrer"><Icon name="github" />访问我的 GitHub<Icon name="arrow" size={19} /></a></div>
+</div></section>
+<style>
+  .contact-layout { display:grid; grid-template-columns:1fr 1fr; gap:65px; align-items:start; }.contact-copy { padding-top:7px; font-size:15px; }.contact-copy p { margin-bottom:20px; line-height:1.9; }.contact-copy .button { margin-top:6px; font-size:14px; }
+  @media (max-width:767px) { .contact-layout { grid-template-columns:1fr; gap:24px; } }
+</style>

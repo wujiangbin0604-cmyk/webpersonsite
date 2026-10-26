@@ -1,0 +1,68 @@
+---
+import { categories,projects,profile } from "../data/portfolio";
+import ProjectVisual from "./ProjectVisual.astro";
+import Icon from "./Icon.astro";
+import { withBase } from "../utils/paths";
+---
+<section id="projects" class="section"><div class="container-width">
+  <p class="section-label">从想法到作品</p><h2 class="section-title">我的项目</h2>
+  <p class="project-intro muted">软件、实验与学习记录，每一次动手都留下痕迹。</p>
+  <div class="project-tools">
+    <div class="filters" role="group" aria-label="按项目方向筛选">{categories.map((category,index) => <button type="button" class:list={["filter",{selected:index === 0}]} data-category={category} aria-pressed={index === 0}>{category}</button>)}</div>
+    <label class="search-label"><span class="sr-only">搜索项目名称、介绍或技术</span><input id="project-search" type="search" placeholder="搜索项目或技术…" autocomplete="off" /></label>
+  </div>
+  <p id="project-count" class="result-count muted" role="status" aria-live="polite">共 {projects.length} 个项目与实践合集</p>
+  <div class="project-grid">{projects.map(project => <article class="project-card" data-project data-category={project.category} data-search={[project.title,project.subtitle,project.summary,...project.stack,...project.highlights].join(" ").toLowerCase()}>
+    <a class="project-cover" href={withBase(`projects/${project.slug}/`)} aria-label={`了解${project.title}`}><ProjectVisual project={project} /></a>
+    <div class="project-meta"><span>{project.category}</span><span class="status-dot">{project.status}</span></div>
+    <div class="project-name"><h3><a href={withBase(`projects/${project.slug}/`)}>{project.title}</a></h3><a class="icon-link" href={withBase(`projects/${project.slug}/`)} aria-label={`查看${project.title}详情`}><Icon name="arrow" /></a></div>
+    <p class="subtitle">{project.subtitle}</p><p class="project-summary muted">{project.summary}</p>
+    <div class="tags">{project.stack.map(item => <span class="tag">{item}</span>)}</div>
+    <div class="project-links"><a href={withBase(`projects/${project.slug}/`)}>项目详情</a>{project.github && <a href={project.github} target="_blank" rel="noopener noreferrer"><Icon name="github" size={15} />源码</a>}{project.demo && <a href={project.demo} target="_blank" rel="noopener noreferrer">{project.demoLabel}<Icon name="arrow" size={15} /></a>}</div>
+  </article>)}</div>
+  <div class="empty-state" id="empty-projects" hidden><p>没有找到匹配的项目</p><p class="muted">换个关键词，或查看全部项目。</p><button type="button" class="button" id="reset-projects">重置筛选</button></div>
+  <a class="more-projects button" href={`${profile.github}?tab=repositories`} target="_blank" rel="noopener noreferrer"><Icon name="github" size={21} />在 GitHub 查看更多代码</a>
+</div></section>
+<script>
+  const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>(".filter"));
+  const cards = Array.from(document.querySelectorAll<HTMLElement>("[data-project]"));
+  const search = document.querySelector<HTMLInputElement>("#project-search");
+  const count = document.getElementById("project-count");
+  const empty = document.getElementById("empty-projects");
+  let selected = "全部";
+  function update() {
+    const query = search?.value.trim().toLowerCase() ?? "";
+    let visible = 0;
+    cards.forEach(card => {
+      card.hidden = !(selected === "全部" || card.dataset.category === selected) || !card.dataset.search?.includes(query);
+      if (!card.hidden) visible++;
+    });
+    if (count) count.textContent = `显示 ${visible} / ${cards.length} 个项目与实践合集`;
+    if (empty) empty.hidden = visible > 0;
+    buttons.forEach(button => { const active = button.dataset.category === selected; button.classList.toggle("selected",active); button.setAttribute("aria-pressed",String(active)); });
+  }
+  buttons.forEach(button => button.addEventListener("click",() => { selected = button.dataset.category ?? "全部"; update(); }));
+  search?.addEventListener("input",update);
+  document.getElementById("reset-projects")?.addEventListener("click",() => { selected = "全部"; if (search) search.value = ""; update(); search?.focus(); });
+</script>
+<style>
+  .project-intro { margin-top:16px; font-size:15px; }
+  .project-tools { margin-top:32px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+  .filters { display:flex; flex-wrap:wrap; gap:6px; }
+  .filter { border:1px solid transparent; border-radius:9px; padding:8px 13px; color:#aaaab2; background:transparent; font-size:13px; }
+  .filter:hover { background:#ffffff06; color:var(--white); }.filter.selected { color:#c8aaff; background:#a476ff12; border-color:#a476ff44; }
+  input { width:214px; max-width:100%; background:#ffffff04; border:1px solid var(--line); border-radius:9px; color:var(--white); padding:8px 12px; font-size:13px; }input::placeholder { color:#80808a; }
+  .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
+  .result-count { font-size:12px; margin-block:18px 25px; }
+  .project-grid { display:grid; grid-template-columns:1fr 1fr; gap:48px 32px; }.project-card { min-width:0; }
+  .project-cover { display:block; overflow:hidden; border-radius:16px; border:1px solid var(--line); }
+  .project-meta { display:flex; justify-content:space-between; gap:12px; margin-top:18px; font-size:11px; color:#b19acb; }
+  .status-dot { color:#9b9ba7; display:flex; align-items:center; gap:6px; }.status-dot::before { content:""; width:4px; height:4px; border-radius:50%; background:#a476ff; }
+  .project-name { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:6px; }
+  h3 { font-size:22px; font-weight:550; line-height:1.5; }h3 a:hover { color:#c5a7ff; }
+  .icon-link { width:35px; height:35px; flex-shrink:0; display:flex; justify-content:center; align-items:center; color:#a0a0ad; border:1px solid var(--line); border-radius:9px; }.icon-link:hover { color:var(--sec); border-color:#a476ff44; }
+  .subtitle { font-size:13px; color:#b9b9c2; margin-top:3px; }.project-summary { font-size:13px; line-height:1.9; margin-block:12px 16px; }
+  .project-links { display:flex; align-items:center; gap:18px; flex-wrap:wrap; margin-top:17px; padding-top:14px; border-top:1px solid var(--line); font-size:12px; color:#b3a0d5; }.project-links a { display:inline-flex; gap:5px; align-items:center; }.project-links a:hover { color:#e0d0ff; }
+  .more-projects { display:flex; margin-top:45px; border-radius:999px; font-size:14px; }.empty-state { text-align:center; padding:70px 15px; }.empty-state p { margin-bottom:14px; }
+  @media (max-width:767px) { .project-grid { grid-template-columns:1fr; gap:36px; }.filter { padding:7px 10px; font-size:12px; }.search-label,input { width:100%; }h3 { font-size:21px; } }
+</style>

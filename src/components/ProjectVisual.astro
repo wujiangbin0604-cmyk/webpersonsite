@@ -1,0 +1,39 @@
+---
+import { Image } from "astro:assets";
+import type { Project } from "../data/portfolio";
+interface Props { project: Project; }
+const { project } = Astro.props;
+const assets = import.meta.glob<{default: ImageMetadata}>("../assets/projects/*.{png,jpg,jpeg}",{eager:true});
+const asset = project.image ? assets[`../assets/projects/${project.image}`]?.default : undefined;
+---
+<div class:list={["visual",`visual-${project.motif}`,{"has-image":Boolean(asset)}]}>
+  {asset ? <Image src={asset} alt={project.imageAlt ?? project.title} width={1000} widths={[400,700,1000]} sizes="(max-width:767px) 100vw, 500px" format="webp" loading="lazy" class="project-image" /> : <div class="project-art" aria-hidden="true">
+    {project.motif === "temple" ? <><div class="temple-roof">⌁</div><div class="temple-lot">天后<br />灵签</div><div class="temple-wave"></div></> : project.motif === "fish" ? <><svg class="fish-art" width="190" height="130" viewBox="0 0 190 130" fill="none"><path d="M26 71C26 36 59 20 100 24c42 4 65 31 63 54-2 29-34 36-73 29-41-7-64-12-64-36Z" fill="#5c4036" stroke="#b49079" stroke-width="2"/><path d="M43 68c24 24 75 29 104 7M47 54c16 14 33 18 45 16m15-25 14 38" stroke="#c6a58a" stroke-width="3" stroke-linecap="round"/><path d="m132 28 40-18" stroke="#c9ad8c" stroke-width="9" stroke-linecap="round"/></svg><span class="fish-time">05:00</span></> : project.motif === "research" ? <svg class="structure" viewBox="0 0 400 150" fill="none"><path d="M65 80h85l60-45 80 40-80 45-60-40m60-45v85m80-45 60-40m-60 40 60 50" stroke="#a476ff" stroke-opacity=".45"/><g fill="#211a31" stroke="#a476ff">{[[65,80],[150,80],[210,35],[210,120],[290,75],[350,35],[350,125]].map(([cx,cy]) => <circle cx={cx} cy={cy} r="10" />)}</g></svg> : project.motif === "orbit" ? <svg class="structure" viewBox="0 0 400 150" fill="none"><ellipse cx="200" cy="75" rx="110" ry="45" transform="rotate(-18 200 75)" stroke="#a476ff" stroke-opacity=".4"/><ellipse cx="200" cy="75" rx="66" ry="66" stroke="#a476ff" stroke-opacity=".2"/><circle cx="200" cy="75" r="17" fill="#241c35" stroke="#b398dd"/><circle cx="294" cy="39" r="6" fill="#b398dd"/></svg> : project.motif === "web" ? <div class="window-art"><div class="window-top"><i></i><i></i><i></i></div><div class="window-body"><div></div><div></div><div></div></div></div> : <div class="code-art">{project.motif === "model" ? "ƒ(x)" : "{ / }"}</div>}
+    <div class="art-caption"><span>{project.title}</span><small>{project.subtitle}</small></div>
+  </div>}
+</div>
+<style>
+  .visual { width:100%; aspect-ratio:1.75; overflow:hidden; background:#17151e; position:relative; }
+  .project-image { width:100%; height:100%; object-fit:contain; padding:10px; background:#eeedf1; transition:transform .3s; }
+  .has-image:hover .project-image { transform:scale(1.025); }
+  .project-art { height:100%; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; padding-bottom:48px; background:radial-gradient(ellipse at 50% 28%,#35244477,transparent 75%); }
+  .art-caption { position:absolute; left:24px; bottom:19px; display:grid; gap:2px; }
+  .art-caption span { color:#c7b5e4; font-size:16px; font-weight:500; }
+  .art-caption small { color:#93869f; font-size:11px; }
+  .structure { width:85%; max-height:145px; }
+  .code-art { color:#a887d4; font-family:Consolas,monospace; font-size:64px; font-weight:300; }
+  .window-art { width:67%; height:105px; border:1px solid #a476ff55; border-radius:8px; background:#16131e; transform:perspective(500px) rotateY(-8deg); }
+  .window-top { display:flex; gap:4px; height:22px; align-items:center; padding-left:10px; border-bottom:1px solid #a476ff22; }
+  .window-top i { width:4px; height:4px; border-radius:50%; background:#8f72ba; }
+  .window-body { display:grid; gap:8px; padding:15px; }
+  .window-body div { width:85%; height:6px; background:#a476ff22; border-radius:2px; }
+  .window-body div:nth-child(2) { width:60%; }.window-body div:nth-child(3) { width:74%; }
+  .visual-temple { background:#111f30; }.visual-temple .project-art { background:radial-gradient(ellipse at 50% 30%,#2c385c,transparent 80%); }
+  .temple-roof { position:absolute; top:-5px; font-size:140px; line-height:1; color:#d3aa66; }
+  .temple-lot { margin-top:22px; padding:16px 14px 9px; font-size:21px; line-height:1.5; text-align:center; color:#e7c690; border:1px solid #b7854e; background:#602b30; letter-spacing:3px; }
+  .temple-wave { position:absolute; width:160%; height:80px; border-top:1px solid #6f91b255; border-radius:50%; bottom:-40px; transform:rotate(-8deg); }
+  .visual-temple .art-caption span { color:#e7c690; }.visual-temple .art-caption small { color:#ac9b80; }
+  .visual-fish { background:#211b19; }.visual-fish .project-art { background:radial-gradient(ellipse at 50% 30%,#49382b66,transparent 80%); flex-direction:column; gap:0; }
+  .fish-art { height:110px; }.fish-time { color:#baaa95; font-size:17px; font-family:Consolas,monospace; letter-spacing:2px; }
+  .visual-fish .art-caption span { color:#c9b7a1; }.visual-fish .art-caption small { color:#a99783; }
+</style>

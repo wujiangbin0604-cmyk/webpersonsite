@@ -1,0 +1,14 @@
+---
+import { withBase } from "../utils/paths";
+const technologies = [{name:"Python"},{name:"TypeScript",icon:"typeScript"},{name:"React",icon:"react"},{name:"Vue",icon:"vue"},{name:"PyTorch"},{name:"Java"},{name:"C++"},{name:"Node.js",icon:"nodejs"},{name:"Git",icon:"git"}];
+---
+<div class="logo-wall" aria-label="使用的技术：Python、TypeScript、React、Vue、PyTorch、Java、C++、Node.js 和 Git"><div class="logo-track" aria-hidden="true">{[0,1].map(() => <div class="logo-group">{technologies.map(tech => <div class="technology">{tech.icon && <img src={withBase(`svg/${tech.icon}.svg`)} alt="" width="25" height="25" loading="lazy" />}<span>{tech.name}</span></div>)}</div>)}</div></div>
+<style>
+  .logo-wall { overflow:hidden; padding-block:38px 48px; mask-image:linear-gradient(to right,transparent,black 8%,black 92%,transparent); }
+  .logo-track { display:flex; width:max-content; animation:marquee 45s linear infinite; }
+  .logo-group { display:flex; align-items:center; gap:50px; padding-right:50px; }
+  .technology { display:flex; align-items:center; gap:10px; color:#98989f; font-size:17px; white-space:nowrap; }
+  img { opacity:.65; object-fit:contain; }
+  .logo-wall:hover .logo-track { animation-play-state:paused; }
+  @keyframes marquee { to { transform:translateX(-50%); } }
+</style>

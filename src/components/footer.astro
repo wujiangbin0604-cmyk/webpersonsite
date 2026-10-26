@@ -1,0 +1,7 @@
+---
+import { profile } from "../data/portfolio";
+---
+<footer class="container-width"><p>© {new Date().getFullYear()} {profile.name} · 项目与学习记录</p><div><a href={profile.github} target="_blank" rel="noopener noreferrer">GitHub</a><span>Astro + Tailwind CSS</span></div><p class="template-credit">模板源自 <a href="https://github.com/nuonuo-888/Portfolio" target="_blank" rel="noopener noreferrer">Portfolio</a>，原作者 Oscar Hernandez，依 MIT 许可使用。</p></footer>
+<style>
+  footer { border-top:1px solid var(--line); padding-block:30px 35px; display:flex; flex-wrap:wrap; justify-content:space-between; gap:15px; color:#9999a3; font-size:12px; }footer div { display:flex; gap:22px; }a:hover { color:var(--sec); }.template-credit { width:100%; font-size:11px; color:#85858f; }
+</style>
